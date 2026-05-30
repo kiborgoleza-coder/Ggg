@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数字、星期、月份 — Числа, дни, месяцы</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --primary: #059669;
+    --primary-light: #d1fae5;
+    --accent: #f97316;
+    --accent-light: #ffedd5;
+    --rose: #e11d48;
+    --rose-light: #ffe4e6;
+    --success: #10b981;
+    --danger: #ef4444;
+    --dark: #1e293b;
+    --gray: #64748b;
+    --light: #f8fafc;
+    --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    --card-shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Noto Sans', 'Noto Sans SC', sans-serif;
+    background: var(--light);
+    color: var(--dark);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.header {
+    background: linear-gradient(135deg, #059669 0%, #0891b2 100%);
+    color: white;
+    padding: 2rem 1rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.3;
+}
+
+.header h1 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 900; position: relative; z-index: 1; }
+.header .subtitle { font-size: 1.1rem; opacity: 0.9; margin-top: 0.5rem; position: relative; z-index: 1; }
+.header .emoji { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+
+.nav-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    flex-wrap: wrap;
+}
+
+.nav-tab {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    background: var(--light);
+    color: var(--gray);
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nav-tab:hover { background: var(--primary-light); color: var(--primary); }
+.nav-tab.active { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(5,150,105,0.3); }
+
+.content-section {
+    display: none;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+    animation: fadeIn 0.4s ease;
+}
+
+.content-section.active { display: block; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.numbers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.8rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.num-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.2rem 0.5rem;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 3px solid transparent;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.num-card:hover { transform: scale(1.08); border-color: var(--primary); }
+.num-card .num-char { font-size: 2rem; font-weight: 900; color: var(--primary); font-family: 'Noto Sans SC', sans-serif; }
+.num-card .num-pinyin { font-size: 0.85rem; color: var(--gray); margin: 0.2rem 0; }
+.num-card .num-arab { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
+
+.big-nums-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.big-num-card {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.big-num-card:hover { transform: translateY(-4px); border-color: var(--primary); }
+.big-num-card .bn-char { font-size: 2.5rem; font-weight: 900; color: var(--primary); font-family: 'Noto Sans SC', sans-serif; }
+.big-num-card .bn-pinyin { font-size: 1rem; color: var(--gray); margin: 0.3rem 0; }
+.big-num-card .bn-value { font-size: 1.1rem; font-weight: 700; color: var(--dark); }
+
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.day-card {
+    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.day-card:hover { transform: translateY(-4px); border-color: var(--rose); }
+.day-card .day-char { font-size: 2.5rem; font-weight: 900; color: var(--dark); font-family: 'Noto Sans SC', sans-serif; }
+.day-card .day-pinyin { font-size: 1rem; color: var(--gray); margin: 0.3rem 0; }
+.day-card .day-trans { font-size: 1.1rem; font-weight: 700; color: var(--dark); }
+
+.months-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.month-card {
+    background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.month-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+.month-card .month-num {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    width: 30px;
+    height: 30px;
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+.month-card .month-char { font-size: 2.5rem; font-weight: 900; color: var(--accent); font-family: 'Noto Sans SC', sans-serif; }
+.month-card .month-pinyin { font-size: 1rem; color: var(--gray); margin: 0.3rem 0; }
+.month-card .month-trans { font-size: 1.1rem; font-weight: 700; color: var(--dark); }
+
+.rule-box {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: var(--primary-light);
+    border-radius: 20px;
+    border-left: 5px solid var(--primary);
+}
+
+.rule-box h3 { color: var(--primary); margin-bottom: 0.8rem; font-size: 1.2rem; }
+.rule-box p { color: var(--dark); line-height: 1.8; }
+.rule-box code {
+    background: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.quiz-container { max-width: 700px; margin: 0 auto; }
+
+.quiz-card {
+    background: white;
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+    text-align: center;
+}
+
+.quiz-progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+}
+
+.quiz-progress-bar {
+    flex: 1;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    margin: 0 1rem;
+    overflow: hidden;
+}
+
+.quiz-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #0891b2);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.quiz-question { font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--gray); }
+
+.quiz-target {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-weight: 900;
+    color: var(--dark);
+    margin: 1rem 0;
+    font-family: 'Noto Sans SC', sans-serif;
+}
+
+.quiz-target .pinyin-hint {
+    font-size: 1.2rem;
+    color: var(--gray);
+    font-weight: 400;
+    display: block;
+    margin-top: 0.3rem;
+}
+
+.quiz-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.quiz-option {
+    padding: 1.2rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    background: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.quiz-option:hover { border-color: var(--primary); background: var(--primary-light); }
+.quiz-option.correct { background: #d1fae5; border-color: var(--success); color: #065f46; animation: correctPulse 0.5s ease; }
+.quiz-option.wrong { background: #fee2e2; border-color: var(--danger); color: #991b1b; animation: shake 0.5s ease; }
+.quiz-option.disabled { pointer-events: none; opacity: 0.6; }
+
+@keyframes correctPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+
+.quiz-feedback {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    display: none;
+}
+
+.quiz-feedback.show { display: block; animation: fadeIn 0.3s ease; }
+.quiz-feedback.correct-fb { background: #d1fae5; color: #065f46; }
+.quiz-feedback.wrong-fb { background: #fee2e2; color: #991b1b; }
+
+.next-btn {
+    margin-top: 1.5rem;
+    padding: 0.9rem 2.5rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.next-btn.show { display: inline-block; animation: fadeIn 0.3s ease; }
+.next-btn:hover { background: #047857; transform: scale(1.05); }
+
+.match-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.match-card {
+    aspect-ratio: 1;
+    background: white;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--card-shadow);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 3px solid transparent;
+    padding: 1rem;
+    text-align: center;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.match-card:hover { transform: scale(1.05); }
+.match-card.selected { border-color: var(--primary); background: var(--primary-light); }
+.match-card.matched { border-color: var(--success); background: #d1fae5; pointer-events: none; animation: correctPulse 0.5s ease; }
+
+.match-card .match-char {
+    font-size: 2.5rem;
+    font-weight: 900;
+    font-family: 'Noto Sans SC', sans-serif;
+}
+
+.match-card .match-sub {
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-top: 0.3rem;
+}
+
+.stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.stat-item { text-align: center; }
+.stat-value { font-size: 2rem; font-weight: 900; color: var(--primary); }
+.stat-label { font-size: 0.85rem; color: var(--gray); }
+
+.finish-screen { text-align: center; padding: 3rem 1rem; }
+.finish-screen .trophy { font-size: 5rem; margin-bottom: 1rem; }
+.finish-screen h2 { font-size: 2rem; margin-bottom: 1rem; }
+.finish-screen .score-display { font-size: 3rem; font-weight: 900; color: var(--primary); margin: 1rem 0; }
+
+.restart-btn {
+    padding: 1rem 2.5rem;
+    background: linear-gradient(135deg, var(--primary), #0891b2);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.restart-btn:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(5,150,105,0.3); }
+
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    animation: confотово! Вот полный код для **чисел, дней недели и всех 12 месяцев**:
+
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数字、星期、月份 — Числа, дни, месяцы</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --primary: #059669;
+    --primary-light: #d1fae5;
+    --accent: #f97316;
+    --accent-light: #ffedd5;
+    --rose: #e11d48;
+    --rose-light: #ffe4e6;
+    --success: #10b981;
+    --danger: #ef4444;
+    --dark: #1e293b;
+    --gray: #64748b;
+    --light: #f8fafc;
+    --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    --card-shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Noto Sans', 'Noto Sans SC', sans-serif;
+    background: var(--light);
+    color: var(--dark);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.header {
+    background: linear-gradient(135deg, #059669 0%, #0891b2 100%);
+    color: white;
+    padding: 2rem 1rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.3;
+}
+
+.header h1 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 900; position: relative; z-index: 1; }
+.header .subtitle { font-size: 1.1rem; opacity: 0.9; margin-top: 0.5rem; position: relative; z-index: 1; }
+.header .emoji { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+
+.nav-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    flex-wrap: wrap;
+}
+
+.nav-tab {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    background: var(--light);
+    color: var(--gray);
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nav-tab:hover { background: var(--primary-light); color: var(--primary); }
+.nav-tab.active { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(5,150,105,0.3); }
+
+.content-section {
+    display: none;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+    animation: fadeIn 0.4s ease;
+}
+
+.content-section.active { display: block; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.numbers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.8rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.num-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.2rem 0.5rem;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 3px solid transparent;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.num-card:hover { transform: scale(1.08); border-color: var(--primary); }
+.num-card .num-char { font-size: 2rem; font-weight: 900; color: var(--primary); font-family: 'Noto Sans SC', sans-serif; }
+.num-card .num-pinyin { font-size: 0.85rem; color: var(--gray); margin: 0.2rem 0; }
+.num-card .num-arab { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
+
+.big-nums-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.big-num-card {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.big-num-card:hover { transform: translateY(-4px); border-color: var(--primary); }
+.big-num-card .bn-char { font-size: 2.5rem; font-weight: 900; color: var(--primary); font-family: 'Noto Sans SC', sans-serif; }
+.big-num-card .bn-pinyin { font-size: 1rem; color: var(--gray); margin: 0.3rem 0; }
+.big-num-card .bn-value { font-size: 1.1rem; font-weight: 700; color: var(--dark); }
+
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.day-card {
+    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.day-card:hover { transform: translateY(-4px); border-color: var(--rose); }
+.day-card .day-char { font-size: 2.5rem; font-weight: 900; color: var(--dark); font-family: 'Noto Sans SC', sans-serif; }
+.day-card .day-pinyin { font-size: 1rem; color: var(--gray); margin: 0.3rem 0; }
+.day-card .day-trans { font-size: 1.1rem; font-weight: 700; color: var(--dark); }
+
+.months-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.month-card {
+    background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.month-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+.month-card .month-num {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    width: 30px;
+    height: 30px;
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+.month-card .month-char { font-size: 2.5rem; font-weight: 900; color: var(--accent); font-family: 'Noto Sans SC', sans-serif; }
+.month-card .month-pinyin { font-size: 1rem; color: var(--gray); margin: 0.3rem 0; }
+.month-card .month-trans { font-size: 1.1rem; font-weight: 700; color: var(--dark); }
+
+.rule-box {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: var(--primary-light);
+    border-radius: 20px;
+    border-left: 5px solid var(--primary);
+}
+
+.rule-box h3 { color: var(--primary); margin-bottom: 0.8rem; font-size: 1.2rem; }
+.rule-box p { color: var(--dark); line-height: 1.8; }
+.rule-box code {
+    background: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.quiz-container { max-width: 700px; margin: 0 auto; }
+
+.quiz-card {
+    background: white;
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+    text-align: center;
+}
+
+.quiz-progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+}
+
+.quiz-progress-bar {
+    flex: 1;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    margin: 0 1rem;
+    overflow: hidden;
+}
+
+.quiz-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #0891b2);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.quiz-question { font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--gray); }
+
+.quiz-target {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-weight: 900;
+    color: var(--dark);
+    margin: 1rem 0;
+    font-family: 'Noto Sans SC', sans-serif;
+}
+
+.quiz-target .pinyin-hint {
+    font-size: 1.2rem;
+    color: var(--gray);
+    font-weight: 400;
+    display: block;
+    margin-top: 0.3rem;
+}
+
+.quiz-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.quiz-option {
+    padding: 1.2rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    background: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.quiz-option:hover { border-color: var(--primary); background: var(--primary-light); }
+.quiz-option.correct { background: #d1fae5; border-color: var(--success); color: #065f46; animation: correctPulse 0.5s ease; }
+.quiz-option.wrong { background: #fee2e2; border-color: var(--danger); color: #991b1b; animation: shake 0.5s ease; }
+.quiz-option.disabled { pointer-events: none; opacity: 0.6; }
+
+@keyframes correctPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+
+.quiz-feedback {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    display: none;
+}
+
+.quiz-feedback.show { display: block; animation: fadeIn 0.3s ease; }
+.quiz-feedback.correct-fb { background: #d1fae5; color: #065f46; }
+.quiz-feedback.wrong-fb { background: #fee2e2; color: #991b1b; }
+
+.next-btn {
+    margin-top: 1.5rem;
+    padding: 0.9rem 2.5rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.next-btn.show { display: inline-block; animation: fadeIn 0.3s ease; }
+.next-btn:hover { background: #047857; transform: scale(1.05); }
+
+.match-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.match-card {
+    aspect-ratio: 1;
+    background: white;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--card-shadow);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 3px solid transparent;
+    padding: 1rem;
+    text-align: center;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.match-card:hover { transform: scale(1.05); }
+.match-card.selected { border-color: var(--primary); background: var(--primary-light); }
+.match-card.matched { border-color: var(--success); background: #d1fae5; pointer-events: none; animation: correctPulse 0.5s ease; }
+
+.match-card .match-char {
+    font-size: 2.5rem;
+    font-weight: 900;
+    font-family: 'Noto Sans SC', sans-serif;
+}
+
+.match-card .match-sub {
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-top: 0.3rem;
+}
+
+.stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.stat-item { text-align: center; }
+.stat-value { font-size: 2rem; font-weight: 900; color: var(--primary); }
+.stat-label { font-size: 0.85rem; color: var(--gray); }
+
+.finish-screen { text-align: center; padding: 3rem 1rem; }
+.finish-screen .trophy { font-size: 5rem; margin-bottom: 1rem; }
+.finish-screen h2 { font-size: 2rem; margin-bottom: 1rem; }
+.finish-screen .score-display { font-size: 3rem; font-weight: 900; color: var(--primary); margin: 1rem 0; }
+
+.restart-btn {
+    padding: 1rem 2.5rem;
+    background: linear-gradient(135deg, var(--primary), #0891b2);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.restart-btn:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(5,150,105,0.3); }
+
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    animation: confetti-fall 3s ease-out forwards;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+@keyframes confetti-fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+@media (max-width: 600px) {
+    .numbers-grid { grid-template-columns: repeat(3, 1fr); }
+    .big-nums-grid { grid-template-columns: repeat(2, 1fr); }
+    .days-grid { grid-template-columns: 1fr 1fr; }
+    .months-grid { grid-template-columns: 1fr 1fr; }
+    .quiz-options { grid-template-columns: 1fr; }
+    .match-grid { grid-template-columns: repeat(2, 1fr); }
+    .nav-tab { padding: 0.5rem 1rem; font-size: 0.85rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <span class="emoji">🔢</span>
+    <h1>数字、星期、月份</h1>
+    <p class="subtitle">Числа, дни недели, месяцы</p>
+</div>
+
+<div class="nav-tabs">
+    <button class="nav-tab active" onclick="showSection('numbers')">🔢 Числа</button>
+    <button class="nav-tab" onclick="showSection('days')">📅 Дни</button>
+    <button class="nav-tab" onclick="showSection('months')">📆 Месяцы</button>
+    <button class="nav-tab" onclick="showSection('quiz')">🎯 Викторина</button>
+    <button class="nav-tab" onclick="showSection('match')">🧩 Пары</button>
+</div>
+
+<!-- NUMBERS -->
+<div id="numbers" class="content-section active">
+    <div class="stats-bar">
+        <div class="stat-item"><div class="stat-value">1-10</div><div class="stat-label">базовые</div></div>
+        <div class="stat-item"><div class="stat-value">10-100</div><div class="stat-label">десятки</div></div>
+        <div class="stat-item"><div class="stat-value">100+</div><div class="stat-label">большие</div></div>
+    </div>
+    
+    <h2 style="text-align: center; margin-bottom: 1rem; color: var(--dark);">1 — 10</h2>
+    <div class="numbers-grid" id="nums-1-10"></div>
+    
+    <h2 style="text-align: center; margin: 2rem 0 1rem; color: var(--dark);">10 — 100 (десятки)</h2>
+    <div class="numbers-grid" id="nums-10-100"></div>
+    
+    <h2 style="text-align: center; margin: 2rem 0 1rem; color: var(--dark);">Большие числа</h2>
+    <div class="big-nums-grid" id="big-nums"></div>
+    
+    <div class="rule-box">
+        <h3>📌 Правила чисел:</h3>
+        <p>
+            <b>21 =</b> <code>二十一</code> (èrshíyī) — 二十 + 一<br>
+            <b>35 =</b> <code>三十五</code> (sānshíwǔ) — 三十 + 五<br>
+            <b>100 =</b> <code>一百</code> (yìbǎi)<br>
+            <b>1,000 =</b> <code>一千</code> (yìqiān)<br>
+            <b>10,000 =</b> <code>一万</code> (yíwàn) — ⚠️ важная единица!<br>
+            <b>100,000 =</b> <code>十万</code> (shíwàn)<br>
+            <b>1,000,000 =</b> <code>一百万</code> (yìbǎiwàn)<br>
+            <b>100,000,000 =</b> <code>一亿</code> (yíyì)
+        </p>
+    </div>
+</div>
+
+<!-- DAYS -->
+<div id="days" class="content-section">
+    <div class="stats-bar">
+        <div class="stat-item"><div class="stat-value">7</div><div class="stat-label">дней</div></div>
+        <div class="stat-item"><div class="stat-value">星期</div><div class="stat-label">xīngqī</div></div>
+    </div>
+    
+    <div class="days-grid" id="days-grid"></div>
+    
+    <div class="rule-box">
+        <h3>📌 Правило дней недели:</h3>
+        <p>
+            <code>星期</code> + число (1-6) = день недели<br>
+            <code>星期一</code> = понедельник, <code>星期二</code> = вторник...<br>
+            <code>星期六</code> = суббота<br><br>
+            <b>Воскресенье:</b><br>
+            <code>星期日</code> (xīngqīrì) или <code>星期天</code> (xīngqītiān)<br><br>
+            <b>Также можно спросить:</b><br>
+            <code>今天星期几？</code> (Jīntiān xīngqī jǐ?) — Какой сегодня день недели?
+        </p>
+    </div>
+</div>
+
+<!-- MONTHS -->
+<div id="months" class="content-section">
+    <div class="stats-bar">
+        <div class="stat-item"><div class="stat-value">12</div><div class="stat-label">месяцев</div></div>
+        <div class="stat-item"><div class="stat-value">月</div><div class="stat-label">yuè</div></div>
+    </div>
+    
+    <div class="months-grid" id="months-grid"></div>
+    
+    <div class="rule-box">
+        <h3>📌 Правило месяцев:</h3>
+        <p>
+            <b>Очень просто!</b> Число (1-12) + <code>月</code> (yuè — месяц)<br><br>
+            <code>一月</code> = январь, <code>二月</code> = февраль...<br>
+            <code>十一月</code> = ноябрь, <code>十二月</code> = декабрь<br><br>
+            <b>Дата:</b> <code>月</code> + число + <code>日/号</code><br>
+            <code>三月五日</code> = 5 марта<br>
+            <code>十月一号</code> = 1 октября (国庆节 — День образования КНР!)
+        </p>
+    </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="content-section">
+    <div class="quiz-container">
+        <div class="quiz-card" id="quiz-card">
+            <div class="quiz-progress">
+                <span id="quiz-current">1</span>
+                <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-progress-fill" style="width: 0%"></div></div>
+                <span id="quiz-total">15</span>
+            </div>
+            <div class="quiz-question">Выбери правильный перевод:</div>
+            <div class="quiz-target" id="quiz-target"></div>
+            <div class="quiz-options" id="quiz-options"></div>
+            <div class="quiz-feedback" id="quiz-feedback"></div>
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()">Дальше →</button>
+        </div>
+    </div>
+</div>
+
+<!-- MATCH -->
+<div id="match" class="content-section">
+    <div class="stats-bar">
+        <div class="stat-item"><div class="stat-value" id="match-score">0</div><div class="stat-label">найдено пар</div></div>
+        <div class="stat-item"><div class="stat-value" id="match-moves">0</div><div class="stat-label">ходов</div></div>
+    </div>
+    <div class="match-grid" id="match-grid"></div>
+</div>
+
+<script>
+// ===== DATA =====
+const numbers1_10 = [
+    { char: '一', pinyin: 'yī', num: '1' },
+    { char: '二', pinyin: 'èr', num: '2' },
+    { char: '三', pinyin: 'sān', num: '3' },
+    { char: '四', pinyin: 'sì', num: '4' },
+    { char: '五', pinyin: 'wǔ', num: '5' },
+    { char: '六', pinyin: 'liù', num: '6' },
+    { char: '七', pinyin: 'qī', num: '7' },
+    { char: '八', pinyin: 'bā', num: '8' },
+    { char: '九', pinyin: 'jiǔ', num: '9' },
+    { char: '十', pinyin: 'shí', num: '10' }
+];
+
+const numbers10_100 = [
+    { char: '二十', pinyin: 'èrshí', num: '20' },
+    { char: '三十', pinyin: 'sānshí', num: '30' },
+    { char: '四十', pinyin: 'sìshí', num: '40' },
+    { char: '五十', pinyin: 'wǔshí', num: '50' },
+    { char: '六十', pinyin: 'liùshí', num: '60' },
+    { char: '七十', pinyin: 'qīshí', num: '70' },
+    { char: '八十', pinyin: 'bāshí', num: '80' },
+    { char: '九十', pinyin: 'jiǔshí', num: '90' },
+    { char: '一百', pinyin: 'yìbǎi', num: '100' }
+];
+
+const bigNumbers = [
+    { char: '一百', pinyin: 'yìbǎi', value: '100', num: '100' },
+    { char: '一千', pinyin: 'yìqiān', value: '1,000', num: '1000' },
+    { char: '一万', pinyin: 'yíwàn', value: '10,000', num: '10000' },
+    { char: '十万', pinyin: 'shíwàn', value: '100,000', num: '100000' },
+    { char: '一百万', pinyin: 'yìbǎiwàn', value: '1,000,000', num: '1000000' },
+    { char: '一千万', pinyin: 'yìqiānwàn', value: '10,000,000', num: '10000000' },
+    { char: '一亿', pinyin: 'yíyì', value: '100,000,000', num: '100000000' }
+];
+
+const days = [
+    { char: '星期一', pinyin: 'xīngqīyī', trans: 'понедельник' },
+    { char: '星期二', pinyin: 'xīngqīèr', trans: 'вторник' },
+    { char: '星期三', pinyin: 'xīngqīsān', trans: 'среда' },
+    { char: '星期四', pinyin: 'xīngqīsì', trans: 'четверг' },
+    { char: '星期五', pinyin: 'xīngqīwǔ', trans: 'пятница' },
+    { char: '星期六', pinyin: 'xīngqīliù', trans: 'суббота' },
+    { char: '星期日', pinyin: 'xīngqīrì', trans: 'воскресенье' }
+];
+
+const months = [
+    { char: '一月', pinyin: 'yīyuè', trans: 'январь', num: 1 },
+    { char: '二月', pinyin: 'èryuè', trans: 'февраль', num: 2 },
+    { char: '三月', pinyin: 'sānyuè', trans: 'март', num: 3 },
+    { char: '四月', pinyin: 'sìyuè', trans: 'апрель', num: 4 },
+    { char: '五月', pinyin: 'wǔyuè', trans: 'май', num: 5 },
+    { char: '六月', pinyin: 'liùyuè', trans: 'июнь', num: 6 },
+    { char: '七月', pinyin: 'qīyuè', trans: 'июль', num: 7 },
+    { char: '八月', pinyin: 'bāyuè', trans: 'август', num: 8 },
+    { char: '九月', pinyin: 'jiǔyuè', trans: 'сентябрь', num: 9 },
+    { char: '十月', pinyin: 'shíyuè', trans: 'октябрь', num: 10 },
+    { char: '十一月', pinyin: 'shíyīyuè', trans: 'ноябрь', num: 11 },
+    { char: '十二月', pinyin: 'shíèryuè', trans: 'декабрь', num: 12 }
+];
+
+const quizQuestions = [
+    { target: '五', pinyin: 'wǔ', trans: '5', correct: '5', options: ['3', '5', '7', '9'] },
+    { target: '二十', pinyin: 'èrshí', trans: '20', correct: '20', options: ['12', '20', '200', '2'] },
+    { target: '一百', pinyin: 'yìbǎi', trans: '100', correct: '100', options: ['10', '1000', '100', '10000'] },
+    { target: '一万', pinyin: 'yíwàn', trans: '10000', correct: '10000', options: ['1000', '100', '10000', '100000'] },
+    { target: '星期一', pinyin: 'xīngqīyī', trans: 'понедельник', correct: 'понедельник', options: ['воскресенье', 'понедельник', 'вторник', 'суббота'] },
+    { target: '星期六', pinyin: 'xīngqīliù', trans: 'суббота', correct: 'суббота', options: ['пятница', 'воскресенье', 'суббота', 'четверг'] },
+    { target: '三月', pinyin: 'sānyuè', trans: 'март', correct: 'март', options: ['май', 'март', 'апрель', 'июнь'] },
+    { target: '十一月', pinyin: 'shíyīyuè', trans: 'ноябрь', correct: 'ноябрь', options: ['октябрь', 'декабрь', 'ноябрь', 'сентябрь'] },
+    { target: '七十', pinyin: 'qīshí', trans: '70', correct: '70', options: ['17', '70', '700', '7'] },
+    { target: '八月', pinyin: 'bāyuè', trans: 'август', correct: 'август', options: ['июль', 'август', 'сентябрь', 'июнь'] },
+    { target: '星期四', pinyin: 'xīngqīsì', trans: 'четверг', correct: 'четверг', options: ['среда', 'четверг', 'пятница', 'вторник'] },
+    { target: '十二月', pinyin: 'shíèryuè', trans: 'декабрь', correct: 'декабрь', options: ['ноябрь', 'январь', 'декабрь', 'октябрь'] },
+    { target: '九十', pinyin: 'jiǔshí', trans: '90', correct: '90', options: ['19', '90', '900', '9'] },
+    { target: '一亿', pinyin: 'yíyì', trans: '100000000', correct: '100000000', options: ['1000000', '10000000', '100000000', '10000'] },
+    { target: '星期日', pinyin: 'xīngqīrì', trans: 'воскресенье', correct: 'воскресенье', options: ['суббота', 'понедельник', 'воскресенье', 'пятница'] }
+];
+
+// ===== STATE =====
+let currentQuiz = 0;
+let quizScore = 0;
+let matchSelected = null;
+let matchPairsFound = 0;
+let matchMoves = 0;
+let matchLocked = false;
+
+// ===== INIT =====
+function init() {
+    renderNumbers();
+    renderDays();
+    renderMonths();
+    renderQuiz();
+    renderMatch();
+}
+
+// ===== NAVIGATION =====
+function showSection(id) {
+    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// ===== NUMBERS =====
+function renderNumbers() {
+    const grid1 = document.getElementById('nums-1-10');
+    grid1.innerHTML = numbers1_10.map(n => `
+        <div class="num-card" onclick="animateCard(this)">
+            <div class="num-char">${n.char}</div>
+            <div class="num-pinyin">${n.pinyin}</div>
+            <div class="num-arab">${n.num}</div>
+        </div>
+    `).join('');
+    
+    const grid2 = document.getElementById('nums-10-100');
+    grid2.innerHTML = numbers10_100.map(n => `
+        <div class="num-card" onclick="animateCard(this)">
+            <div class="num-char">${n.char}</div>
+            <div class="num-pinyin">${n.pinyin}</div>
+            <div class="num-arab">${n.num}</div>
+        </div>
+    `).join('');
+    
+    const grid3 = document.getElementById('big-nums');
+    grid3.innerHTML = bigNumbers.map(n => `
+        <div class="big-num-card" onclick="animateCard(this)">
+            <div class="bn-char">${n.char}</div>
+            <div class="bn-pinyin">${n.pinyin}</div>
+            <div class="bn-value">${n.value}</div>
+        </div>
+    `).join('');
+}
+
+function animateCard(card) {
+    card.style.transform = 'scale(0.95)';
+    setTimeout(() => card.style.transform = 'scale(1.05)', 100);
+    setTimeout(() => card.style.transform = '', 200);
+}
+
+// ===== DAYS =====
+function renderDays() {
+    const grid = document.getElementById('days-grid');
+    grid.innerHTML = days.map(d => `
+        <div class="day-card" onclick="animateCard(this)">
+            <div class="day-char">${d.char}</div>
+            <div class="day-pinyin">${d.pinyin}</div>
+            <div class="day-trans">${d.trans}</div>
+        </div>
+    `).join('');
+}
+
+// ===== MONTHS =====
+function renderMonths() {
+    const grid = document.getElementById('months-grid');
+    grid.innerHTML = months.map(m => `
+        <div class="month-card" onclick="animateCard(this)">
+            <div class="month-num">${m.num}</div>
+            <div class="month-char">${m.char}</div>
+            <div class="month-pinyin">${m.pinyin}</div>
+            <div class="month-trans">${m.trans}</div>
+        </div>
+    `).join('');
+}
+
+// ===== QUIZ =====
+function renderQuiz() {
+    if (currentQuiz >= quizQuestions.length) {
+        showQuizFinish();
+        return;
+    }
+    
+    const q = quizQuestions[currentQuiz];
+    document.getElementById('quiz-current').textContent = currentQuiz + 1;
+    document.getElementById('quiz-total').textContent = quizQuestions.length;
+    document.getElementById('quiz-progress-fill').style.width = ((currentQuiz / quizQuestions.length) * 100) + '%';
+    
+    document.getElementById('quiz-target').innerHTML = `
+        ${q.target}
+        <span class="pinyin-hint">${q.pinyin}</span>
+    `;
+    
+    const optsDiv = document.getElementById('quiz-options');
+    optsDiv.innerHTML = q.options.map(opt => `
+        <button class="quiz-option" onclick="checkAnswer('${opt}', '${q.correct}')">${opt}</button>
+    `).join('');
+    
+    document.getElementById('quiz-feedback').className = 'quiz-feedback';
+    document.getElementById('quiz-feedback').textContent = '';
+    document.getElementById('next-btn').classList.remove('show');
+}
+
+function checkAnswer(selected, correct) {
+    const options = document.querySelectorAll('.quiz-option');
+    const feedback = document.getElementById('quiz-feedback');
+    
+    options.forEach(btn => {
+        btn.classList.add('disabled');
+        if (btn.textContent === correct) btn.classList.add('correct');
+        else if (btn.textContent === selected && selected !== correct) btn.classList.add('wrong');
+    });
+    
+    if (selected === correct) {
+        quizScore++;
+        feedback.className = 'quiz-feedback show correct-fb';
+        feedback.innerHTML = '✅ Правильно! Отлично!';
+        createConfetti();
+    } else {
+        feedback.className = 'quiz-feedback show wrong-fb';
+        feedback.innerHTML = `❌ Неверно. Правильно: <b>${correct}</b>`;
+    }
+    
+    document.getElementById('next-btn').classList.add('show');
+}
+
+function nextQuestion() {
+    currentQuiz++;
+    renderQuiz();
+}
+
+function showQuizFinish() {
+    const card = document.getElementById('quiz-card');
+    const percentage = Math.round((quizScore / quizQuestions.length) * 100);
+    
+    card.innerHTML = `
+        <div class="finish-screen">
+            <div class="trophy">🏆</div>
+            <h2>Викторина завершена!</h2>
+            <div class="score-display">${quizScore} / ${quizQuestions.length}</div>
+            <p style="color: var(--gray); font-size: 1.1rem;">
+                ${percentage >= 80 ? 'Супер! Ты эксперт! 🎉' : percentage >= 50 ? 'Хорошо, но можно лучше! 💪' : 'Учи ещё! 📚'}
+            </p>
+            <button class="restart-btn" onclick="restartQuiz()">Пройти снова ↺</button>
+        </div>
+    `;
+    if (percentage >= 60) createConfetti();
+}
+
+function restartQuiz() {
+    currentQuiz = 0;
+    quizScore = 0;
+    document.getElementById('quiz-card').innerHTML = `
+        <div class="quiz-progress">
+            <span id="quiz-current">1</span>
+            <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-progress-fill" style="width: 0%"></div></div>
+            <span id="quiz-total">15</span>
+        </div>
+        <div class="quiz-question">Выбери правильный перевод:</div>
+        <div class="quiz-target" id="quiz-target"></div>
+        <div class="quiz-options" id="quiz-options"></div>
+        <div class="quiz-feedback" id="quiz-feedback"></div>
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">Дальше →</button>
+    `;
+    renderQuiz();
+}
+
+// ===== MATCH GAME =====
+function renderMatch() {
+    const grid = document.getElementById('match-grid');
+    const items = [
+        ...numbers1_10.slice(0, 4),
+        ...days.slice(0, 3),
+        ...months.slice(0, 3)
+    ];
+    const cards = [];
+    
+    items.forEach(item => {
+        const pairKey = item.char;
+        let meaning = item.num || item.trans;
+        cards.push({ type: 'char', value: item.char, pair: pairKey });
+        cards.push({ type: 'meaning', value: meaning, pair: pairKey });
+    });
+    
+    cards.sort(() => Math.random() - 0.5);
+    
+    grid.innerHTML = cards.map((c, i) => `
+        <div class="match-card" data-pair="${c.pair}" data-index="${i}" onclick="handleMatchClick(this)">
+            <div class="match-char">${c.type === 'char' ? c.value : '?'}</div>
+            <div class="match-sub">${c.type === 'meaning' ? c.value : c.value}</div>
+        </div>
+    `).join('');
+}
+
+function handleMatchClick(card) {
+    if (matchLocked || card.classList.contains('matched')) return;
+    
+    card.classList.add('selected');
+    
+    if (!matchSelected) {
+        matchSelected = card;
+        return;
+    }
+    
+    if (matchSelected === card) {
+        card.classList.remove('selected');
+        matchSelected = null;
+        return;
+    }
+    
+    matchLocked = true;
+    matchMoves++;
+    document.getElementById('match-moves').textContent = matchMoves;
+    
+    const pair1 = matchSelected.dataset.pair;
+    const pair2 = card.dataset.pair;
+    
+    if (pair1 === pair2) {
+        matchSelected.classList.remove('selected');
+        matchSelected.classList.add('matched');
+        card.classList.remove('selected');
+        card.classList.add('matched');
+        matchPairsFound++;
+        document.getElementById('match-score').textContent = matchPairsFound;
+        matchSelected = null;
+        matchLocked = false;
+        
+        if (matchPairsFound === 10) {
+            setTimeout(() => {
+                alert('🎉 Все пары найдены за ' + matchMoves + ' ходов!');
+                createConfetti();
+            }, 500);
+        }
+    } else {
+        setTimeout(() => {
+            matchSelected.classList.remove('selected');
+            card.classList.remove('selected');
+            matchSelected = null;
+            matchLocked = false;
+        }, 800);
+    }
+}
+
+// ===== CONFETTI =====
+function createConfetti() {
+    const colors = ['#059669', '#0891b2', '#f97316', '#e11d48', '#7c3aed', '#f59e0b'];
+    for (let i = 0; i < 40; i++) {
+        const conf = document.createElement('div');
+        conf.className = 'confetti';
+        conf.style.left = Math.random() * 100 + 'vw';
+        conf.style.background = colors[Math.floor(Math.random() * colors.length)];
+        conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        conf.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        document.body.appendChild(conf);
+        setTimeout(() => conf.remove(), 4000);
+    }
+}
+
+// Start
+init();
+</script>
+</body>
+</html>
